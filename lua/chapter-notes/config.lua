@@ -12,7 +12,7 @@ local defaults = {
   
   -- 窗口布局
   max_chapter_width = 90,
-  min_notes_width = 5,
+  min_notes_width = 3,
   border_style = "rounded",
   border_chars = {
     "─", "│", "─", "│", "╭", "╮", "╯", "╰"
@@ -55,7 +55,7 @@ local function validate_config(user_config)
   
   if config.min_notes_width < 5 then
     config.min_notes_width = 5
-    vim.notify("min_notes_width Too small, adjusted to 10", vim.log.levels.WARN)
+    vim.notify("min_notes_width Too small, adjusted to 5", vim.log.levels.WARN)
   end
   
   -- 验证边框样式

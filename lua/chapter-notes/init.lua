@@ -65,12 +65,22 @@ function M.setup_autocmds()
   })
 
   -- 切换标签页时检查
-  vim.api.nvim_create_autocmd("TabEnter", {
+  -- vim.api.nvim_create_autocmd("TabEnter", {
+  --   group = augroup,
+  --   callback = function()
+  --     vim.defer_fn(function()
+  --       core.check_and_close_notes()
+  --     end, 50)
+  --   end
+  -- })
+
+  vim.api.nvim_create_autocmd("VimResized", {
     group = augroup,
     callback = function()
-      vim.defer_fn(function()
-        core.check_and_close_notes()
-      end, 50)
+      -- 延迟一小段时间，确保窗口大小变化已经完成
+      -- vim.defer_fn(function()
+        core.adjust_windows_layout()
+      -- end, 50)
     end
   })
 end

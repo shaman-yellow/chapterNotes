@@ -243,6 +243,73 @@ function M.update_notes_for_current_buffer()
   end
 end
 
+function M.adjust_windows_layout()
+  -- 如果没有笔记窗口或者 chapter 窗口，直接返回
+  if not state.note_windows.left or not state.note_windows.right then
+    return
+  end
+  
+  local left_valid = vim.api.nvim_win_is_valid(state.note_windows.left)
+  local right_valid = vim.api.nvim_win_is_valid(state.note_windows.right)
+  
+  if not left_valid or not right_valid then
+    return
+  end
+  
+  -- 获取当前的总宽度
+  local total_width = vim.o.columns
+  local chapter_win = nil
+  
+  -- 尝试找到 chapter 窗口
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if not vim.api.nvim_win_is_valid(win) then
+      goto continue
+    end
+    
+    -- 检查窗口标记，找到 chapter 窗口
+    local marker = utils.get_win_var(win, state.window_marker)
+    if not marker then
+      -- 如果窗口没有标记，尝试根据 buffer 判断
+      local bufnr = vim.api.nvim_win_get_buf(win)
+      local file = vim.api.nvim_buf_get_name(bufnr)
+      if utils.is_chapter_file(file, state.config) then
+        chapter_win = win
+        break
+      end
+    end
+    
+    ::continue::
+  end
+  
+  if not chapter_win then
+    -- 如果没有找到 chapter 窗口，尝试使用当前窗口
+    chapter_win = vim.api.nvim_get_current_win()
+  end
+  
+  -- 计算新的窗口宽度
+  local win_height = vim.api.nvim_win_get_height(chapter_win)
+  local chapter_width = math.min(state.config.max_chapter_width, total_width - (state.config.min_notes_width * 2))
+  local notes_width = math.floor((total_width - chapter_width) / 2)
+  
+  -- 确保最小宽度
+  if notes_width < state.config.min_notes_width then
+    notes_width = state.config.min_notes_width
+    chapter_width = total_width - (notes_width * 2)
+  end
+  
+  -- 调整 chapter 窗口宽度
+  vim.api.nvim_win_set_width(chapter_win, chapter_width)
+  
+  -- 调整左笔记窗口宽度
+  vim.api.nvim_win_set_width(state.note_windows.left, notes_width)
+  
+  -- 调整右笔记窗口宽度
+  vim.api.nvim_win_set_width(state.note_windows.right, notes_width)
+  
+  -- 由于调整宽度可能导致窗口位置变化，我们需要确保左笔记窗口在左侧，右笔记在右侧
+  -- 但使用 split='left' 和 split='right' 创建的窗口，Neovim 应该会自动维护位置
+end
+
 function M.sync_all_notes()
   local chapter_bufnr = state.current_chapter
   
