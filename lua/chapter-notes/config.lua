@@ -53,8 +53,8 @@ local function validate_config(user_config)
     vim.notify("max_chapter_width Too small, adjusted to 20", vim.log.levels.WARN)
   end
   
-  if config.min_notes_width < 5 then
-    config.min_notes_width = 5
+  if config.min_notes_width < 2 then
+    config.min_notes_width = 2
     vim.notify("min_notes_width Too small, adjusted to 5", vim.log.levels.WARN)
   end
   
