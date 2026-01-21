@@ -96,7 +96,6 @@ function M.check_and_close_notes()
       break
     end
   end
-  
   if not has_chapter then
     M.close_notes_windows()
   end
