@@ -53,6 +53,20 @@ function M.setup_autocmds()
     end
   })
 
+  vim.api.nvim_create_autocmd("User", {
+    pattern = SessionWritePreUser,
+    callback = function()
+      core.check_and_close_notes()
+    end,
+  })
+
+  -- vim.api.nvim_create_autocmd("User", {
+  --   pattern = SessionLoadPreUser,
+  --   callback = function()
+  --     core.check_and_close_notes()
+  --   end,
+  -- })
+
   -- 写入 chapter 文件时同步笔记
   vim.api.nvim_create_autocmd("BufWritePost", {
     group = augroup,
