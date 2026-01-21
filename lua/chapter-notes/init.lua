@@ -54,7 +54,7 @@ function M.setup_autocmds()
   })
 
   vim.api.nvim_create_autocmd("User", {
-    pattern = SessionWritePreUser,
+    pattern = "SessionWritePreUser",
     callback = function()
       core.check_and_close_notes()
     end,
